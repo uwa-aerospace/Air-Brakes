@@ -6,8 +6,6 @@ import sys
 
 df=pd.read_csv(sys.argv[1])
 
-print(df["height"])
-
 fig, ax = plt.subplots()
 
 ax.plot(df["height"], "b", label="Height")
