@@ -1,6 +1,6 @@
 #include "air-brakes.h"
 
-#define OPTLIST "sf:c:"
+#define OPTLIST ":sf:t:c:"
 
 void runSimulations()
 {
@@ -38,7 +38,8 @@ int main(int argc, char *argv[])
 	int option = -1;
 	bool simulate = false;
 	bool useFile = false;
-	int csvColumn = 2;
+	int csvAltitudeColumn = 2;
+	int csvTimeColumn = 1;
 
 	char *fileName = NULL;
 	while ((option = getopt(argc, argv, OPTLIST)) != -1)
@@ -56,11 +57,18 @@ int main(int argc, char *argv[])
 			// Simulation data file to use (with -s flag)
 			useFile = true;
 			fileName = strdup(optarg);
+			break;
 		}
 		case 'c':
 		{
 			// What column of the CSV to use (with -f flag)
-			csvColumn = atoi(optarg);
+			csvAltitudeColumn = atoi(strdup(optarg));
+			break;
+		}
+		case 't':
+		{
+			csvTimeColumn = atoi(strdup(optarg));
+			break;
 		}
 		default:
 		{
@@ -74,7 +82,6 @@ int main(int argc, char *argv[])
 		if (useFile)
 		{
 			FILE *stream = fopen(fileName, "r");
-
 			char line[3000];
 			while (fgets(line, 3000, stream))
 			{
@@ -83,7 +90,10 @@ int main(int argc, char *argv[])
 					continue;
 				}
 				char *tmp = strdup(line);
-				printf("Height: %s\n", getfield(tmp, csvColumn));
+				const char* height = getfield(tmp, csvAltitudeColumn);
+				tmp = strdup(line);
+				const char* time = getfield(tmp, csvTimeColumn);
+				printf("At time %s, altitude: %s\n", time, height);
 				free(tmp);
 			}
 		}
