@@ -12,7 +12,7 @@ int getFakeCurrentHeightQuadratic(int time, int maxTime, int maxHeight)
     return -(4 * time * (time - maxTime) * maxHeight) / (pow(maxTime, 2.0));
 }
 
-int[] initialiseFile(char *fileName)
+int initialiseFile(char *fileName)
 {
     FILE *file;
     file = fopen(fileName, "r");
@@ -28,16 +28,19 @@ int[] initialiseFile(char *fileName)
     while (fgets(line, sizeof line, file) != NULL)
     {
         char *ch = line;
+        printf("%s\n", ch);
         // TODO: read in the simulation data to use in place of a quadratic
     }
+    return 0;
 }
 
-int getFakeCurrentHeightFromFile(int time, int)
+int getFakeCurrentHeightFromFile(int time)
 {
     static bool initialised = false;
-    static int[] heights;
+    // static int heights[1024];
 
-    // TODO: initialiseFile() if required, read the appropriate data
+    printf("%i\n", time);
 
     initialised = true;
+    return 0;
 }
