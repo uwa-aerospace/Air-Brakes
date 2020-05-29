@@ -2,34 +2,26 @@
 
 #define OPTLIST ":sf:t:c:"
 
-void runSimulations()
+void runQuadraticSimulations()
 {
 	int maxTime = 100;
 	int maxHeight = 10000;
 	for (size_t i = 0; i <= maxTime / 2; i++)
 	{
 		int currentHeight = getFakeCurrentHeightQuadratic(i, maxTime, maxHeight);
-		int PIDResult = PIDController(currentHeight);
+		int PIDResult = PIDController(currentHeight, maxHeight);
 		printf("%i,%i\n", currentHeight, PIDResult);
 	}
 }
 
-const char *getfield(char *line, int num)
+void runFileSimulations(int maxTime)
 {
-	const char *tok;
-	for (tok = strtok(line, ","); tok && *tok; tok = strtok(NULL, ",\n"))
+	for (float i = 0.0; i <= maxTime; i += 0.1)
 	{
-		if (!--num)
-			return tok;
+		int currentHeight = getFakeCurrentHeightFromFile(i);
+		int PIDResult = PIDController(currentHeight, 3000);
+		printf("%i,%i\n", currentHeight, PIDResult);
 	}
-	return NULL;
-}
-
-bool startsWith(const char *pre, const char *str)
-{
-	size_t lenpre = strlen(pre),
-		   lenstr = strlen(str);
-	return lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
 }
 
 int main(int argc, char *argv[])
@@ -61,12 +53,13 @@ int main(int argc, char *argv[])
 		}
 		case 'c':
 		{
-			// What column of the CSV to use (with -f flag)
+			// What column of the CSV to use for altitude (with -f flag)
 			csvAltitudeColumn = atoi(strdup(optarg));
 			break;
 		}
 		case 't':
 		{
+			// What column of the CSV to use for time (with -f flag)
 			csvTimeColumn = atoi(strdup(optarg));
 			break;
 		}
@@ -81,25 +74,11 @@ int main(int argc, char *argv[])
 	{
 		if (useFile)
 		{
-			FILE *stream = fopen(fileName, "r");
-			char line[3000];
-			while (fgets(line, 3000, stream))
-			{
-				if (startsWith("#", line))
-				{
-					continue;
-				}
-				char *tmp = strdup(line);
-				const char* height = getfield(tmp, csvAltitudeColumn);
-				tmp = strdup(line);
-				const char* time = getfield(tmp, csvTimeColumn);
-				printf("At time %s, altitude: %s\n", time, height);
-				free(tmp);
-			}
+			runFileSimulations(initialiseFile(fileName, csvTimeColumn, csvAltitudeColumn));
 		}
 		else
 		{
-			runSimulations();
+			runQuadraticSimulations();
 		}
 	}
 

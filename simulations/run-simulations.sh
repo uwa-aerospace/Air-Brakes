@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compile, exit if compilation fails
-make -C .. || exit 1
+make -C .. || exit -1
 echo "Compiled successfully."
 echo
 

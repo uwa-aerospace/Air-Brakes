@@ -1,8 +1,5 @@
 #include "air-brakes.h"
 
-// Metres
-#define DESIRED_HEIGHT 10000
-
 #define KP 2
 #define KI 50
 #define KD 450
@@ -11,14 +8,14 @@
 bool first = true;
 
 // Example discrete PID controller
-int PIDController(int currentHeight)
+int PIDController(int currentHeight, int desiredHeight)
 {
     // Retained upon the next call of the function
     static int R_old = 0.0;
     static int e_old = 0.0;
     static int e_old_old = 0.0;
 
-    int e = DESIRED_HEIGHT - currentHeight;
+    int e = desiredHeight - currentHeight;
     int result = R_old + KP * (e - e_old) + KI * (e + e_old) / 2 + KD * (e - 2 * e_old + e_old_old);
 
     // Store current values to compare for next time
