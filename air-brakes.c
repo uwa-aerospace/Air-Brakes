@@ -1,6 +1,6 @@
 #include "air-brakes.h"
 
-#define OPTLIST ":sf:t:c:"
+#define OPTLIST ":sf:t:a:"
 
 void runQuadraticSimulations()
 {
@@ -19,7 +19,7 @@ void runFileSimulations(int maxTime)
 	for (float i = 0.0; i <= maxTime; i += 0.1)
 	{
 		int currentHeight = getFakeCurrentHeightFromFile(i);
-		int PIDResult = PIDController(currentHeight, 3000);
+		int PIDResult = PIDController(currentHeight, 2400);
 		printf("%i,%i\n", currentHeight, PIDResult);
 	}
 }
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 			fileName = strdup(optarg);
 			break;
 		}
-		case 'c':
+		case 'a':
 		{
 			// What column of the CSV to use for altitude (with -f flag)
 			csvAltitudeColumn = atoi(strdup(optarg));

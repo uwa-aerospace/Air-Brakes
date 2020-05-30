@@ -3,7 +3,10 @@
 #define KP 2
 #define KI 50
 #define KD 450
-#define OUTPUT_SCALING_DIVISOR 100000
+// #define KP 50
+// #define KI 20
+// #define KD 1
+#define OUTPUT_SCALING_DIVISOR 200000
 
 bool first = true;
 
@@ -22,9 +25,7 @@ int PIDController(int currentHeight, int desiredHeight)
     R_old = result;
     e_old_old = e_old;
     e_old = e;
-    
-    if (!first)
-    {
+    if (!first && ((desiredHeight - currentHeight) * 100)/desiredHeight < 20) { // Last 20% of flight
         return result / OUTPUT_SCALING_DIVISOR;
     }
     else

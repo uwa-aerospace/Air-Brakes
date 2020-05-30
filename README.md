@@ -13,9 +13,9 @@ To run the simulations and view an output graph:
 
 ### Example simulation using data from a file
 
-`./air-brakes -s -f simulations/data/H115DM-14A-14.csv -t 1 -c 2`
+`./air-brakes -s -f simulations/data/H115DM-14A-14.csv -t 1 -a 2`
 
-- -s: simulate
-- -f: use a file
-- -t: column of the csv file that is the time
-- -c: column of the csv file that is the altitude
+- `-s`: simulate
+- `-f`: use a file
+- `-t`: column of the csv file that is the time
+- `-a`: column of the csv file that is the altitude
