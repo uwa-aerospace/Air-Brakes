@@ -3,14 +3,7 @@
 bool fileMode = false;
 bool fileInitalised = false;
 
-typedef struct
-{
-    // Can easily just truncate to integers
-    float time;
-    float height;
-} HEIGHT;
-
-HEIGHT *heights;
+DATA_POINT *heights;
 int numberOfHeights = 0;
 
 int getCurrentHeight()
@@ -43,10 +36,10 @@ bool startsWith(const char *pre, const char *str)
     return lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
 }
 
-int initialiseFile(char *fileName, int timeColumn, int altColumn)
+int initialiseFile(char *fileName, int timeColumn, int altColumn, int speedColumn, int accelerationColumn)
 {
     fileMode = true;
-    
+
     FILE *stream = fopen(fileName, "r");
     char line[3000];
     heights = malloc(0);
@@ -60,42 +53,61 @@ int initialiseFile(char *fileName, int timeColumn, int altColumn)
             continue;
         }
         numberOfHeights++;
+
         char *tmp = strdup(line);
         float height = atof(getfield(tmp, altColumn));
+        free(tmp);
+
         tmp = strdup(line);
         float time = atof(getfield(tmp, timeColumn));
+        free(tmp);
+
+        tmp = strdup(line);
+        float speed = atof(getfield(tmp, speedColumn));
+        free(tmp);
+
+        tmp = strdup(line);
+        float acceleration = atof(getfield(tmp, accelerationColumn));
+        free(tmp);
+
         // printf("At time %f, altitude: %f\n", time, height);
-        heights = realloc(heights, numberOfHeights*sizeof(HEIGHT));
+        heights = realloc(heights, numberOfHeights * sizeof(DATA_POINT));
         heights[numberOfHeights - 1].time = time;
         heights[numberOfHeights - 1].height = height;
+        heights[numberOfHeights - 1].speed = speed;
+        heights[numberOfHeights - 1].acceleration = acceleration;
 
-        if (!foundApogee && numberOfHeights > 2) {
-            if (previousHeight > height && height > 5.0) {
+        if (!foundApogee && numberOfHeights > 2)
+        {
+            if (previousHeight > height && height > 5.0)
+            {
                 apogeeTime = time;
                 foundApogee = true;
             }
         }
         previousHeight = height;
-
-        free(tmp);
     }
 
     fileInitalised = true;
-    return (int) apogeeTime;
+    return (int)apogeeTime;
 }
 
-float getFakeCurrentHeightFromFile(float time)
+DATA_POINT *getDataFromFile(float time)
 {
-    if (!fileInitalised) {
-        return -1;
+    if (!fileInitalised)
+    {
+        return NULL;
     }
     float previous = 0.0;
+    DATA_POINT *correct = NULL;
     for (size_t i = 0; i < numberOfHeights; i++)
     {
-        if (time < heights[i].time) {
-            return previous;
+        if (time < heights[i].time)
+        {
+            return correct;
         }
         previous = heights[i].height;
+        correct = &heights[i];
     }
-    return previous;
+    return correct;
 }

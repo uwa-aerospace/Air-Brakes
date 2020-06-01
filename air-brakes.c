@@ -1,6 +1,6 @@
 #include "air-brakes.h"
 
-#define OPTLIST ":sf:t:a:"
+#define OPTLIST ":sf:t:a:r:c:"
 
 void runQuadraticSimulations()
 {
@@ -9,8 +9,8 @@ void runQuadraticSimulations()
 	for (size_t i = 0; i <= maxTime / 2; i++)
 	{
 		int currentHeight = getFakeCurrentHeightQuadratic(i, maxTime, maxHeight);
-		int PIDResult = PIDController(currentHeight, maxHeight);
-		printf("%i,%i\n", currentHeight, PIDResult);
+		float PIDResult = PIDController(currentHeight, maxHeight, 10, 5);
+		printf("%i,%f\n", currentHeight, PIDResult);
 	}
 }
 
@@ -18,9 +18,10 @@ void runFileSimulations(int maxTime)
 {
 	for (float i = 0.0; i <= maxTime; i += 0.1)
 	{
-		int currentHeight = getFakeCurrentHeightFromFile(i);
-		int PIDResult = PIDController(currentHeight, 2400);
-		printf("%i,%i\n", currentHeight, PIDResult);
+		DATA_POINT *currentData = getDataFromFile(i);
+		// Max height 2376.0. Simulate a slight overshoot below.
+		float PIDResult = PIDController(currentData->height, 2370, currentData->speed, currentData->acceleration);
+		printf("%f,%f\n", currentData->height, PIDResult);
 	}
 }
 
@@ -28,10 +29,15 @@ int main(int argc, char *argv[])
 {
 	printf("--- UWA Aerospace: Air Brakes ---\n");
 	int option = -1;
+
 	bool simulate = false;
 	bool useFile = false;
-	int csvAltitudeColumn = 2;
-	int csvTimeColumn = 1;
+
+	// Default CSV columns
+	int csvTimeColumn = 1;		   // time passed (s)
+	int csvAltitudeColumn = 2;	   // height (ft)
+	int csvSpeedColumn = 3;		   // vertical speed (m/s)
+	int csvAccelerationColumn = 4; // vertical acceleration (m/s/s)
 
 	char *fileName = NULL;
 	while ((option = getopt(argc, argv, OPTLIST)) != -1)
@@ -63,6 +69,18 @@ int main(int argc, char *argv[])
 			csvTimeColumn = atoi(strdup(optarg));
 			break;
 		}
+		case 'r':
+		{
+			// What column of the CSV to use for speed (with -f flag)
+			csvSpeedColumn = atoi(strdup(optarg));
+			break;
+		}
+		case 'c':
+		{
+			// What column of the CSV to use for acceleration (with -f flag)
+			csvAccelerationColumn = atoi(strdup(optarg));
+			break;
+		}
 		default:
 		{
 			break;
@@ -74,7 +92,7 @@ int main(int argc, char *argv[])
 	{
 		if (useFile)
 		{
-			runFileSimulations(initialiseFile(fileName, csvTimeColumn, csvAltitudeColumn));
+			runFileSimulations(initialiseFile(fileName, csvTimeColumn, csvAltitudeColumn, csvSpeedColumn, csvAccelerationColumn));
 		}
 		else
 		{
