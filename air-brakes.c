@@ -20,7 +20,7 @@ void runFileSimulations(int maxTime)
 	{
 		DATA_POINT *currentData = getDataFromFile(i);
 		// Max height 2376.0. Simulate a slight overshoot below.
-		float PIDResult = PIDController(currentData->height, 2370, currentData->speed, currentData->acceleration);
+		float PIDResult = PIDController(currentData->height, 2300, currentData->speed, currentData->acceleration);
 		printf("%f,%f\n", currentData->height, PIDResult);
 	}
 }

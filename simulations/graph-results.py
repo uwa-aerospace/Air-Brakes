@@ -18,6 +18,6 @@ ax2.set_ylabel("Brake percentage")
 lines = ax.get_lines() + ax2.get_lines()
 ax.legend(lines, [line.get_label() for line in lines], loc='lower right')
 
-ax.set_title("Simulated air-brake percentage vs. height")
+ax.set_title("Simulated air-brake percentage and height over time")
 fig.canvas.set_window_title('Air brakes simulations')
 plt.show()

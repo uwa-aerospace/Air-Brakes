@@ -4,8 +4,8 @@
 // #define KI 50
 // #define KD 450
 #define KP 50
-#define KI 20
-#define KD 1
+#define KI 10
+#define KD 300
 #define OUTPUT_SCALING_DIVISOR 500
 
 /**
@@ -34,6 +34,7 @@ float PIDController(float currentHeight, float desiredHeight, float currentSpeed
         return 100; // MAXIMUM
     }
 
+    // Feet to metres
     currentHeight *= 0.3048;
     desiredHeight *= 0.3048;
 
