@@ -16,7 +16,7 @@ typedef struct
 } DATA_POINT;
 
 // PID.c
-extern float PIDController(float, float, float, float);
+extern float PIDController(float, DATA_POINT *);
 
 // BMF055.c
 extern int getCurrentHeight();
