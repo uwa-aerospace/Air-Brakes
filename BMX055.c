@@ -1,4 +1,5 @@
 #include "air-brakes.h"
+#include "bma2x2.h"
 
 bool fileMode = false;
 bool fileInitalised = false;

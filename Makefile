@@ -2,7 +2,7 @@
 
 PROJECT =  air-brakes
 HEADERS =  $(PROJECT).h
-OBJ     =  air-brakes.o PID.o BMF055.o
+OBJ     =  air-brakes.o PID.o BMX055.o bma2x2.o bmg160.o bmm150.o
 
 
 C99     =  cc -std=c99
