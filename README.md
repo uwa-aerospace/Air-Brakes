@@ -19,3 +19,10 @@ To run the simulations and view an output graph:
 - `-f`: use a file
 - `-t`: column of the csv file that is the time
 - `-a`: column of the csv file that is the altitude
+
+## BMX055 example code
+
+Check Bosch's GitHub repositories and example code:
+<https://github.com/BoschSensortec/BMA2x2_driver> for the accelerometer
+<https://github.com/BoschSensortec/BMM150-Sensor-API> for the magnetometer
+<https://github.com/BoschSensortec/BMG160_driver> for the gyroscope
