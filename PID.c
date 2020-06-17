@@ -42,8 +42,7 @@ float PIDController(float desiredHeight, DATA_POINT *currentData)
     float requiredDeceleration = ((currentData->speed * currentData->speed) / (2 * (desiredHeight - currentHeight))) - 9.81 + currentData->acceleration;
 
     float e = requiredDeceleration - currentData->acceleration; //desiredHeight - currentHeight; //
-    float timeDifference = currentData->time - lastTime;
-    float result = R_old + (KP * (e - e_old) + KI * (e + e_old) / 2 + KD * (e - 2 * e_old + e_old_old)) * (1.0 + timeDifference);
+    float result = R_old + (KP * (e - e_old) + KI * (e + e_old) / 2 + KD * (e - 2 * e_old + e_old_old)) * (1.0 + (currentData->time - lastTime)*20);
 
     // Store current values to compare for next time
     R_old = result;
