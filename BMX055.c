@@ -129,7 +129,7 @@ DATA_POINT *getDataFromFile(float time)
 }
 
 /* MAGNETOMETER */
-BMX055_MAG default_initialise_magnetometer(int user_spi_read, int user_spi_write, int user_delay_ms)
+BMX055_MAG default_initialise_magnetometer(void *user_spi_read, void *user_spi_write, void *user_delay_ms)
 {
     BMX055_MAG dev;
     int8_t rslt = BMM150_OK;
@@ -240,10 +240,8 @@ int8_t check_interrupt_get_data(BMX055_MAG *dev)
 
 void setUpMagnetometer()
 {
-    int user_spi_read = 0;
-    int user_spi_write = 0;
-    int user_delay_ms = 0;
-    magnetometer = default_initialise_magnetometer(user_spi_read, user_spi_write, user_delay_ms);
+    // Function pointers:                         READ, WRITE, DELAY
+    magnetometer = default_initialise_magnetometer((void *)NULL, (void *)NULL, (void *)NULL);
 
     checkError(set_sensor_settings(&magnetometer), "Sensor settings");
     checkError(perform_self_tests(&magnetometer), "Self test");
