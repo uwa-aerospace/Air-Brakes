@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <unistd.h>
+#include <time.h>
 #include "bma2x2.h"
 
 // Types
@@ -11,7 +12,7 @@ typedef struct
 {
     float time;
     float height;
-    float speed;
+    float vertical_speed;
     float vertical_acceleration;
     s8 temperature;
 } DATA_POINT;

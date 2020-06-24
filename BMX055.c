@@ -15,6 +15,10 @@ bool fileInitalised = false;
 DATA_POINT *heights;
 int numberOfHeights = 0;
 
+clock_t t1, t2;
+bool first = true;
+DATA_POINT previousData;
+
 void checkError(int result, char *message)
 {
     if (result != BMM150_OK)
@@ -86,7 +90,7 @@ int initialiseFile(char *fileName, int timeColumn, int altColumn, int speedColum
         heights = realloc(heights, numberOfHeights * sizeof(DATA_POINT));
         heights[numberOfHeights - 1].time = time;
         heights[numberOfHeights - 1].height = height;
-        heights[numberOfHeights - 1].speed = speed;
+        heights[numberOfHeights - 1].vertical_speed = speed;
         heights[numberOfHeights - 1].vertical_acceleration = acceleration;
 
         if (!foundApogee && numberOfHeights > 2)
@@ -356,6 +360,23 @@ void initialiseBMX055()
 
 DATA_POINT getCurrentBMX055Data()
 {
+    DATA_POINT currentData;
+    if (first)
+    {
+        currentData.time = 0;
+        currentData.height = 0;
+        currentData.vertical_speed = 0;
+        currentData.vertical_acceleration = 0;
+        currentData.temperature = 0;
+
+        previousData = currentData;
+
+        t1 = clock();
+        first = false;
+
+        return currentData;
+    }
+
     if (!magnetometerInitialised)
     {
         setUpMagnetometer();
@@ -370,10 +391,15 @@ DATA_POINT getCurrentBMX055Data()
 
     checkError(check_interrupt_get_data(&magnetometer), "Check interrupt and get data");
 
-    DATA_POINT currentData;
+    t2 = clock();
+    float timeDifference = ((float)(t2 - t1) / CLOCKS_PER_SEC) * 1000;
+    t1 = t2;
+
     currentData.time = 0;
-    currentData.vertical_acceleration = (float)dataXYZT.z;
     currentData.temperature = dataXYZT.temp;
-    // TODO: calculate the current height
+    currentData.vertical_acceleration = (float)dataXYZT.z;
+    currentData.vertical_speed = previousData.vertical_speed + (currentData.vertical_acceleration * timeDifference);
+    currentData.height = previousData.height + (((previousData.vertical_speed + currentData.vertical_speed) / 2) * timeDifference);
+    previousData = currentData;
     return currentData;
 }

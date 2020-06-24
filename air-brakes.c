@@ -13,7 +13,7 @@ void runQuadraticSimulations()
 	{
 		int currentHeight = getFakeCurrentHeightQuadratic(i, maxTime, maxHeight);
 		currentData.height = currentHeight;
-		currentData.speed = 10;
+		currentData.vertical_speed = 10;
 		currentData.vertical_acceleration = 5;
 		float PIDResult = PIDController(maxHeight, &currentData);
 		printf("%i,%f\n", currentHeight, PIDResult);
@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
 	{
 		initialiseBMX055();
 		DATA_POINT currentData;
+		
 		while (true)
 		{
 			currentData = getCurrentBMX055Data();
