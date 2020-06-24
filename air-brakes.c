@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	{
 		initialiseBMX055();
 		DATA_POINT currentData;
-		
+
 		while (true)
 		{
 			currentData = getCurrentBMX055Data();

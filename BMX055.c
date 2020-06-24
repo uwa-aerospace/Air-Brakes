@@ -64,7 +64,7 @@ int initialiseFile(char *fileName, int timeColumn, int altColumn, int speedColum
     bool foundApogee = false;
     while (fgets(line, 3000, stream))
     {
-        if (startsWith("#", line)) // Comment line in the CSV
+        if (startsWith("#", line)) // Comment line in the CSV, ignore
         {
             continue;
         }
@@ -223,15 +223,12 @@ int8_t check_interrupt_get_data(BMX055_MAG *dev)
     {
         if (dev->int_status & BMM150_DATA_READY_INT)
         {
-            /* Interrupt asserted - Read mag data */
+            // Interrupt asserted - Read mag data
             rslt = bmm150_read_mag_data(dev);
-            // printf("\n MAG DATA ");
-            // printf("\n MAG X : %d MAG Y : %d MAG Z : %d ", dev->data.x, dev->data.y, dev->data.z);
         }
         else
         {
-            /*Interrupt not asserted */
-            // printf("\n Data is not ready yet");
+            // Interrupt not asserted
         }
     }
 
@@ -241,7 +238,7 @@ int8_t check_interrupt_get_data(BMX055_MAG *dev)
 void setUpMagnetometer()
 {
     // Function pointers:                         READ, WRITE, DELAY
-    magnetometer = default_initialise_magnetometer((void *)NULL, (void *)NULL, (void *)NULL);
+    magnetometer = default_initialise_magnetometer(NULL, NULL, NULL);
 
     checkError(set_sensor_settings(&magnetometer), "Sensor settings");
     checkError(perform_self_tests(&magnetometer), "Self test");
@@ -250,7 +247,6 @@ void setUpMagnetometer()
 }
 
 /* ACCELEROMETER */
-
 // Declarations
 s8 BMA2x2_SPI_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
 s8 BMA2x2_SPI_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
@@ -263,8 +259,6 @@ extern u8 V_BMA2x2RESOLUTION_u8R;
 
 BMX055_XYZ_TEMP bma2x2_data_readout()
 {
-    // s16 accel_x_s16, accel_y_s16, accel_z_s16 = BMA2x2_INIT_VALUE;
-    // struct bma2x2_accel_data data_xyz;
     BMX055_XYZ_TEMP data_XYZT;
 
     u8 bandwidth_value_u8 = BMA2x2_INIT_VALUE;
@@ -275,17 +269,11 @@ BMX055_XYZ_TEMP bma2x2_data_readout()
     result += bma2x2_set_bw(bandwidth_value_u8);
     result += bma2x2_get_bw(&bandwidth); // This API used to read back the written value of bandwidth
 
-    // Reading the data - individually
-    // result += bma2x2_read_accel_x(&accel_x_s16);
-    // result += bma2x2_read_accel_y(&accel_y_s16);
-    // result += bma2x2_read_accel_z(&accel_z_s16);
-    // result += bma2x2_read_accel_xyz(&data_xyz); // Reading X, Y and Z
-
-    // Read X, Y, Z & T data
     result += bma2x2_read_accel_xyzt(&data_XYZT);
 
     // Set the power mode as DEEPSUSPEND to conserve power
     // result += bma2x2_set_power_mode(BMA2x2_MODE_DEEP_SUSPEND);
+
     checkError(result, "Reading of accelerometer");
     return data_XYZT;
 }
@@ -388,6 +376,7 @@ DATA_POINT getCurrentBMX055Data()
     BMX055_XYZ_TEMP dataXYZT = bma2x2_data_readout();
 
     checkError(check_interrupt_get_data(&magnetometer), "Check interrupt and get data");
+    // magnetometer->data.x, magnetometer->data.y, magnetometer->data.z);
 
     t2 = clock();
     float timeDifference = ((float)(t2 - t1) / CLOCKS_PER_SEC) * 1000;
