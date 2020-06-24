@@ -2,6 +2,8 @@
 
 #define OPTLIST ":sf:t:a:r:c:"
 
+#define FLIGHT_DESIRED_HEIGHT 10000
+
 void runQuadraticSimulations()
 {
 	int maxTime = 100;
@@ -101,6 +103,18 @@ int main(int argc, char *argv[])
 		else
 		{
 			runQuadraticSimulations();
+		}
+	}
+	else
+	{
+		initialiseBMX055();
+		DATA_POINT currentData;
+		while (true)
+		{
+			currentData = getCurrentBMX055Data();
+			float brakePercentage = PIDController(FLIGHT_DESIRED_HEIGHT, &currentData);
+			printf("Brake percentage: %f\n", brakePercentage);
+			// TODO: set the brake percentage on the stepper motor
 		}
 	}
 
