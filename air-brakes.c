@@ -12,15 +12,15 @@ void runQuadraticSimulations()
 		int currentHeight = getFakeCurrentHeightQuadratic(i, maxTime, maxHeight);
 		currentData.height = currentHeight;
 		currentData.speed = 10;
-		currentData.acceleration = 5;
+		currentData.vertical_acceleration = 5;
 		float PIDResult = PIDController(maxHeight, &currentData);
 		printf("%i,%f\n", currentHeight, PIDResult);
 	}
 }
 
-void runFileSimulations(int maxTime)
+void runFileSimulations(int apogeeTime)
 {
-	for (float i = 0.0; i <= maxTime; i += 0.1)
+	for (float i = 0.0; i <= apogeeTime; i += 0.1)
 	{
 		DATA_POINT *currentData = getDataFromFile(i);
 		// Max height 2376.0. Simulate a slight overshoot below.

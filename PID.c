@@ -39,9 +39,9 @@ float PIDController(float desiredHeight, DATA_POINT *currentData)
 
     // Required a = (u^2) / (2s)
     // then subtract gravity because we already have that, and add what we have but need to counteract
-    float requiredDeceleration = ((currentData->speed * currentData->speed) / (2 * (desiredHeight - currentHeight))) - 9.81 + currentData->acceleration;
+    float requiredDeceleration = ((currentData->speed * currentData->speed) / (2 * (desiredHeight - currentHeight))) - 9.81 + currentData->vertical_acceleration;
 
-    float e = requiredDeceleration - currentData->acceleration; //desiredHeight - currentHeight; //
+    float e = requiredDeceleration - currentData->vertical_acceleration; //desiredHeight - currentHeight; //
     float result = R_old + (KP * (e - e_old) + KI * (e + e_old) / 2 + KD * (e - 2 * e_old + e_old_old)) * (1.0 + (currentData->time - lastTime)*20);
 
     // Store current values to compare for next time
@@ -52,7 +52,7 @@ float PIDController(float desiredHeight, DATA_POINT *currentData)
 
     if (firstComplete && secondComplete) // && ((desiredHeight - currentHeight) * 100) / desiredHeight < 50) // Last 20% of height
     {
-        // float returnValue = ((currentData->speed * currentData->speed) / (2 * (result))) - 9.81 + currentData->acceleration;
+        // float returnValue = ((currentData->speed * currentData->speed) / (2 * (result))) - 9.81 + currentData->vertical_acceleration;
         float returnValue = result / OUTPUT_SCALING_DIVISOR;
         if (returnValue > 100)
         {
